@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoStreamer.Net", "videostreamer.net\VideoStreamer.Net.csproj", "{1A71E0BF-E84F-4364-83F4-64DDD43406EE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoStreaming.Net.Web", "VideoStreaming.Net.Web\VideoStreaming.Net.Web.csproj", "{EF380A2E-3CA6-4A8C-B45D-F6B03848F2CA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1A71E0BF-E84F-4364-83F4-64DDD43406EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A71E0BF-E84F-4364-83F4-64DDD43406EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A71E0BF-E84F-4364-83F4-64DDD43406EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A71E0BF-E84F-4364-83F4-64DDD43406EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF380A2E-3CA6-4A8C-B45D-F6B03848F2CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF380A2E-3CA6-4A8C-B45D-F6B03848F2CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF380A2E-3CA6-4A8C-B45D-F6B03848F2CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF380A2E-3CA6-4A8C-B45D-F6B03848F2CA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

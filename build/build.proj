@@ -1,0 +1,26 @@
+<Project DefaultTargets="RunBuild" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+	
+  <PropertyGroup>
+    <RootPath>$([System.IO.Path]::GetFullPath(..\))</RootPath>
+    <SourcesPath>$(RootPath)code</SourcesPath>
+    <ToolsPath>$(RootPath)tools</ToolsPath>
+    <SolutionName>VideoStreamer.Net.sln</SolutionName>
+    <SolutionPath>$(SourcesPath)\VideoStreamer.Net\$(SolutionName)</SolutionPath>
+    <MSBuildExtensionsPath>$(ToolsPath)</MSBuildExtensionsPath>
+
+    <Configuration>Release</Configuration>
+  </PropertyGroup>
+  
+  <Import Project="$(ToolsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets" />
+  <Import Project="$(ToolsPath)\MSBuildExtensionPack\4.0\MSBuild.ExtensionPack.tasks"/>
+
+  <Target Name="RunBuild">
+    <Message Text="Running build..." Importance="High"></Message>
+    <MSBuild Projects="$(SolutionPath)" Targets="Clean;Rebuild" />
+
+    <ItemGroup>
+      <BinaryFiles Include="$(RootPath)\code\VideoStreamer.Net\VideoStreamer.Net\bin\$(Configuration)\**\*.*"/>
+    </ItemGroup>
+    <Copy SourceFiles="@(BinaryFiles)" DestinationFolder="$(RootPath)\build\release"></Copy>
+  </Target>
+</Project>
