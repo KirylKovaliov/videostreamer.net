@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Remoting.Contexts;
 using System.Web;
+using VideoStreamer.Net.Configuration;
 using VideoStreamer.Net.Storage;
 
 namespace VideoStreamer.Net
@@ -26,6 +28,8 @@ namespace VideoStreamer.Net
             public Range<long?> Range { get; set; }
         }
         #endregion
+
+        private const int StreamChunk = 1024 * 1024;
 
         private readonly IStorage _storage;
 
@@ -60,16 +64,53 @@ namespace VideoStreamer.Net
             }
 
             var actualStart = headerInfo.Range.Start ?? 0;
-            var actualEnd = headerInfo.Range.End ?? end;
-            var length = actualEnd - actualStart + 1;
+            var actualEnd = GetActualEnd(size, actualStart, headerInfo.Range.End);
+            
+            var buffer = _storage.Read(file, actualStart, actualEnd);
 
-            //var position =  reader.BaseStream.Seek(actualStart, SeekOrigin.Begin);
-            var buffer = _storage.Read(file, actualStart, length);
+            CompareWithLocal(buffer, actualStart, actualEnd);
+
             context.Response.StatusCode = 206;
             context.Response.AddHeader("Content-Range", "bytes " + actualStart + "-" + actualEnd + "/" + size);
-            context.Response.AddHeader("Content-Length", length.ToString());
+            context.Response.AddHeader("Content-Length", (actualEnd - actualStart + 1).ToString());
             context.Response.BinaryWrite(buffer);
             context.Response.End();
+        }
+
+        private void CompareWithLocal(byte[] buffer, long actualStart, long actualEnd)
+        {
+            FolderStorage storage = new FolderStorage();
+            storage = new FolderStorage();
+            storage.Config = new StorageTypeElement
+            {
+                Folder = "~/App_Data"
+            };
+
+            byte[] initialBuffer = storage.Read("sample.mp4", actualStart, actualEnd);
+            if (!ArraysEqual(buffer, initialBuffer))
+            {
+                throw new Exception("not equals");
+            }
+        }
+
+        static bool ArraysEqual<T>(T[] a1, T[] a2)
+        {
+            if (ReferenceEquals(a1, a2))
+                return true;
+
+            if (a1 == null || a2 == null)
+                return false;
+
+            if (a1.Length != a2.Length)
+                return false;
+
+            EqualityComparer<T> comparer = EqualityComparer<T>.Default;
+            for (int i = 0; i < a1.Length; i++)
+            {
+                if (!comparer.Equals(a1[i], a2[i])) 
+                    return false;
+            }
+            return true;
         }
 
         private HeaderInfo ReadRequestHeader(HttpRequest request)
@@ -104,6 +145,18 @@ namespace VideoStreamer.Net
                 return false;
 
             return true;
+        }
+
+        private long GetActualEnd(long size, long actualStart, long? end)
+        {
+            long result = end.HasValue
+                ? end.Value
+                : actualStart + StreamChunk;
+
+            if (result > size - 1)
+                result = size - 1;
+
+            return result;
         }
 
         private long? ToNullable(string str)

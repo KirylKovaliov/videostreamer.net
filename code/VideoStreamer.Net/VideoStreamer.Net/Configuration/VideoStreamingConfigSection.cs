@@ -4,18 +4,11 @@ namespace VideoStreamer.Net.Configuration
 {
     public class VideoStreamingConfigSection : ConfigurationSection 
     {
-        [ConfigurationProperty("storage")]
-        public StorageTypeElement Storage
+        [ConfigurationProperty("storages", IsRequired = true)]
+        public StorageTypeElementCollection Storages
         {
-            get { return (StorageTypeElement) this["storage"]; }
-            set { this["storage"] = value; }
-        }
-
-        [ConfigurationProperty("prefix", IsRequired = true, DefaultValue = "/video")]
-        public string Prefix
-        {
-            get { return this["prefix"].ToString(); }
-            set { this["prefix"] = value; }
+            get { return (StorageTypeElementCollection)this["storages"]; }
+            set { this["storages"] = value; }
         }
     }
 }

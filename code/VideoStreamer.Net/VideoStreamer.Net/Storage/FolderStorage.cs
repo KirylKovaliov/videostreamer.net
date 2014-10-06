@@ -21,11 +21,12 @@ namespace VideoStreamer.Net.Storage
             return fileInfo.Length;
         }
 
-        public override byte[] Read(string file, long start, long length)
+        public override byte[] Read(string file, long start, long end)
         {
             string filePath = GetFileAbsolutePath(file);
             using (StreamReader reader = new StreamReader(filePath))
             {
+                var length = end - start + 1;
                 byte[] buffer = new byte[length];
                 reader.BaseStream.Seek(start, SeekOrigin.Begin);
                 reader.BaseStream.Read(buffer, 0, (int)length);

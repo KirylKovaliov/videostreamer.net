@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
+using System.Linq;
 using System.Web;
 using VideoStreamer.Net.Configuration;
 using VideoStreamer.Net.Storage;
@@ -9,36 +11,27 @@ namespace VideoStreamer.Net
 {
     public class InterceptModule : IHttpModule
     {
-        private IStorage _storage;
-        private HttpApplication _context;
+        private List<IStorage> _storages;
         private VideoStreamingConfigSection _config;
 
         public void Init(HttpApplication context)
         {
-            _context = context;
             _config = (VideoStreamingConfigSection)ConfigurationManager.GetSection("VideoStreamer");
+            _storages = new List<IStorage>();
             if (_config == null)
                 throw new ConfigurationErrorsException("VideoStreamer.Net isn't configured properly");
 
-            if (string.IsNullOrEmpty(_config.Prefix))
-                throw new ConfigurationErrorsException("VideoStreamer.Net configuration error. Prefix is undefined");
+            if (!_config.Storages.Any())
+                throw new ConfigurationErrorsException("VideoStreamer.Net isn't configured properly. No storages defined. Please setup at least one storage in Web.config");
 
-            if (_config.Storage == null)
-                throw new ConfigurationErrorsException("VideoStreamer.Net Storage type isn't defined");
+            foreach (StorageTypeElement storageConfig in _config.Storages)
+            {
+                var storage = (IStorage)Activator.CreateInstance(Type.GetType(storageConfig.Type));
+                storage.Config = storageConfig;
+                storage.ValidateConfig(storageConfig);
 
-            if (string.IsNullOrEmpty(_config.Storage.Type))
-                throw new ConfigurationErrorsException("VideoStreamer.Net Storage type isn't defined");
-
-            var storageType = Type.GetType(_config.Storage.Type, false, true);
-            if (storageType == null)
-                throw new ConfigurationErrorsException(string.Format("VideoStreamer.Net configuration error. Unable to resolve storage type '{0}'", _config.Storage.Type));
-
-            _storage = Activator.CreateInstance(storageType) as IStorage;
-            if (_storage == null)
-                throw new ConfigurationErrorsException(string.Format("VideoStreamer.Net configuration error. Type '{0}' doesn't implement '{1}'", _config.Storage.Type, typeof(IStorage).FullName));
-
-            _storage.SetupConfig(_config.Storage);
-            _storage.ValidateConfig(_config.Storage);
+                _storages.Add(storage);
+            }
 
             context.PostAuthorizeRequest -= ContextOnPostAuthorizeRequest;
             context.PostAuthorizeRequest += ContextOnPostAuthorizeRequest;
@@ -50,22 +43,23 @@ namespace VideoStreamer.Net
             if (httpApplication == null || httpApplication.Context == null)
                 return;
 
-            var prefix = _config.Prefix.ToLower().Trim();
-            if (!httpApplication.Request.RawUrl.ToLower().StartsWith(prefix))
+            string rawUrl = httpApplication.Request.RawUrl.ToLower();
+            var storage = _storages.FirstOrDefault(x => rawUrl.StartsWith(x.Config.Prefix));
+            if (storage == null)
                 return;
 
 
+            var prefix = storage.Config.Prefix.Trim();
             if (!prefix.EndsWith("/"))
                 prefix += "/";
 
             var fileName = httpApplication.Request.RawUrl.Substring(prefix.Length - 1);
-            RequestHandler handler = new RequestHandler(_storage);
+            RequestHandler handler = new RequestHandler(storage);
             handler.Handle(httpApplication.Context, fileName);
         }
 
         public void Dispose()
         {
-            _context.PostAuthorizeRequest -= ContextOnPostAuthorizeRequest;
         }
     }
 }

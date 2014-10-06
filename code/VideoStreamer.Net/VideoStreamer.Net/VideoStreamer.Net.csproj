@@ -30,6 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AWSSDK">
+      <HintPath>..\packages\AWSSDK.2.3.1.0\lib\net45\AWSSDK.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -41,14 +44,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration\StorageTypeElementCollection.cs" />
+    <Compile Include="Extensions\StreamExtensions.cs" />
     <Compile Include="RequestHandler.cs" />
     <Compile Include="Storage\FolderStorage.cs" />
+    <Compile Include="Storage\S3Storage.cs" />
     <Compile Include="Storage\StorageBase.cs" />
     <Compile Include="Storage\IStorage.cs" />
     <Compile Include="Configuration\StorageTypeElement.cs" />
     <Compile Include="Configuration\VideoStreamingConfigSection.cs" />
     <Compile Include="InterceptModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

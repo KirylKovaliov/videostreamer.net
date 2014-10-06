@@ -7,15 +7,10 @@ namespace VideoStreamer.Net.Storage
     /// </summary>
     public abstract class StorageBase : IStorage
     {
-        protected StorageTypeElement Config { get; private set; }
+        public StorageTypeElement Config { get; set; }
 
         public abstract void ValidateConfig(StorageTypeElement config);
         public abstract long GetLength(string file);
         public abstract byte[] Read(string file, long start, long length);
-
-        public void SetupConfig(StorageTypeElement config)
-        {
-            Config = config;
-        }
     }
 }

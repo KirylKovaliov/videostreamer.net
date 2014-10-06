@@ -1,10 +1,16 @@
-﻿using System.Collections.Specialized;
-using System.Configuration;
+﻿using System.Configuration;
 
 namespace VideoStreamer.Net.Configuration
 {
     public class StorageTypeElement : ConfigurationElement
     {
+        [ConfigurationProperty("prefix", IsRequired = true, DefaultValue = "/video")]
+        public string Prefix
+        {
+            get { return this["prefix"].ToString().ToLower(); }
+            set { this["prefix"] = value.ToLower(); }
+        }
+
         [ConfigurationProperty("type", IsRequired = true)]
         public string Type 
         {
@@ -19,14 +25,32 @@ namespace VideoStreamer.Net.Configuration
             set { this["folder"] = value; }
         }
 
-
-        public NameValueCollection Parameters
+        [ConfigurationProperty("accessKeyId", IsRequired = false)]
+        public string AccessKeyId
         {
-            get
-            {
-                //TODO: read the rest attributes
-                return new NameValueCollection();
-            }
+            get { return (string)this["accessKeyId"]; }
+            set { this["AccessKeyId"] = value; }
+        }
+
+        [ConfigurationProperty("secretAccessKey", IsRequired = false)]
+        public string SecretAccessKey
+        {
+            get { return (string)this["secretAccessKey"]; }
+            set { this["secretAccessKey"] = value; }
+        }
+
+        [ConfigurationProperty("region", IsRequired = false)]
+        public string Region
+        {
+            get { return (string)this["region"]; }
+            set { this["region"] = value; }
+        }
+
+        [ConfigurationProperty("bucket", IsRequired = false)]
+        public string Bucket
+        {
+            get { return (string)this["bucket"]; }
+            set { this["bucket"] = value; }
         }
     }
 }
