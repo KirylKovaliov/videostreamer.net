@@ -10,7 +10,11 @@
 - add *httpModule* **VideoStreamer.Net.InterceptModule** to the web.config
 - configure **VideoStreamer.Net** section in the web.config
 
-for more details please have a look at ASP.Net MVC example **VideoStreaming.Net.Web** 
+for more details please have a look at ASP.Net MVC example **VideoStreaming.Net.Web**
+
+##### Supported Storage
+- **VideoStreamer.Net.Storage.FolderStorage** for streaming media content from directory
+- **VideoStreamer.Net.Storage.S3Storage** for streaming video from Amazon S3
   
 
  
