@@ -12,7 +12,7 @@
 
 for more details please have a look at ASP.Net MVC example **VideoStreaming.Net.Web**
 
-##### Supported Storage
+##### Supported Storages
 - **VideoStreamer.Net.Storage.FolderStorage** for streaming media content from directory
 - **VideoStreamer.Net.Storage.S3Storage** for streaming video from Amazon S3
   
